@@ -2,7 +2,6 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
-const propertyController = require("../controllers/propertyController");
 const inquiryController = require("../controllers/inquiryController");
 const projectController = require("../controllers/projectController");
 const authenticateUser = require("../middleware/authenticateUser");
@@ -15,25 +14,6 @@ router.post("/forgotPassword", userController.forgotPassword);
 router.post("/resetPassword", userController.resetPassword);
 router.get("/users", authenticateUser, userController.allUsers);
 
-//For Selectable Options
-router.get("/stationOptions", propertyController.getStationOptions);
-// Property routes
-router.get("/properties", propertyController.getProperties);
-router.post(
-  "/createProperty",
-  authenticateUser,
-  propertyController.createProperty
-);
-router.put(
-  "/property/:id",
-  authenticateUser,
-  propertyController.updateProperty
-);
-router.delete(
-  "/property/:id",
-  authenticateUser,
-  propertyController.deleteProperty
-);
 // Inquiry Routes
 router.get(
   "/fetchInquiries",
