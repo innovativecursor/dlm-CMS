@@ -1,4 +1,4 @@
-const Amenity = require("../models/amenities");
+const Project = require("../models/Projects");
 const Menu = require("../models/menu");
 const cloudinary = require("../../utils/cloudinary");
 const { formattedResult } = require("../utils/Consts");
@@ -10,9 +10,9 @@ exports.getMenuOptions = async (req, res) => {
       attributes: ["menu_id", "menu_name"],
       // include: [
       //   {
-      //     model: Amenity,
-      //     as: "Amenities", // Use the alias from the association
-      //     attributes: ["amenity_name", "amenity_desc", "pictures"],
+      //     model: Project,
+      //     as: "Projects", // Use the alias from the association
+      //     attributes: ["project_name", "project_desc", "pictures"],
       //   },
       // ],
       order: [["menu_name", "ASC"]],
@@ -21,66 +21,67 @@ exports.getMenuOptions = async (req, res) => {
     res.status(200).json(menus);
   } catch (error) {
     res.status(500).json({
-      message: "Failed to fetch menus with amenities",
+      message: "Failed to fetch menus with projects",
       error: error.message,
     });
   }
 };
-exports.getAmenitiesByMenuId = async (req, res) => {
+exports.getProjectsByMenuId = async (req, res) => {
   try {
     const { menu_id } = req.query;
 
-    //#region Returning Amenities
+    //#region Returning Projects
     // Fetch aminities along with menu_name
-    // const aminities = await Amenity.findAll({
+    // const aminities = await Project.findAll({
     //   where: { menu_id },
     //   include: {
     //     model: Menu,
     //     attributes: ["menu_name", "menu_id"], // Fetch menu_name from Menu model
     //   },
-    //   attributes: ["amenity_name", "amenity_desc", "pictures"], // Only fetch relevant amenity fields
+    //   attributes: ["project_name", "project_desc", "pictures"], // Only fetch relevant project fields
     // });
     // const result = formattedResult(aminities);
     // res.status(200).json(result);
     //#endregion
-    //#region Returing distinct Amenities
-    const distinctAmenities = await Amenity.findAll({
+    //#region Returing distinct Projects
+    const distinctProjects = await Project.findAll({
       where: { menu_id },
       attributes: [
         [
-          Sequelize.fn("DISTINCT", Sequelize.col("amenity_name")),
-          "amenity_name",
+          Sequelize.fn("DISTINCT", Sequelize.col("project_name")),
+          "project_name",
         ],
       ],
     });
 
-    res.status(200).json(distinctAmenities);
+    res.status(200).json(distinctProjects);
   } catch (error) {
     res
       .status(500)
       .json({ message: "Failed to fetch aminities", error: error.message });
   }
 };
-exports.getAmenities = async (req, res) => {
+exports.getProjects = async (req, res) => {
   try {
-    const findAll = await Amenity.findAll({
+    const findAll = await Project.findAll({
       include: {
         model: Menu,
         attributes: ["menu_name", "menu_id"], // Fetch menu_name from Menu model
       },
-      attributes: ["amenity_id", "amenity_name", "amenity_desc", "pictures"],
+      attributes: ["project_id", "project_name", "project_desc", "pictures"],
     });
     const result = formattedResult(findAll);
     res.status(200).json({ result });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to fetch Amenities", error: error.message });
+      .json({ message: "Failed to fetch Projects", error: error.message });
   }
 };
-exports.createAmenity = async (req, res) => {
+exports.createProject = async (req, res) => {
   try {
-    const { menu_name, amenity_name, amenity_desc, pictures } = req.body;
+    const { menu_name, project_name, project_desc, onGoingProject, pictures } =
+      req.body;
 
     // Check if the menu already exists (case-insensitive)
     let menu = await Menu.findOne({
@@ -95,15 +96,15 @@ exports.createAmenity = async (req, res) => {
       menu = await Menu.create({ menu_name });
     }
 
-    // Create the new Amenity
-    const newAmenity = await Amenity.create({
-      amenity_name,
-      amenity_desc,
+    // Create the new Project
+    const newProject = await Project.create({
+      project_name,
+      project_desc,
       pictures: [],
       menu_id: menu.menu_id, // Use the menu_id from the created/found menu
     });
     // Generate a unique folder name using the property ID
-    const folderName = `${process.env.CLOUDINARY_DB}/Amenities_${newAmenity.amenity_id}`;
+    const folderName = `${process.env.CLOUDINARY_DB}/Projects_${newProject.project_id}`;
 
     // Upload pictures to Cloudinary
     const uploadPromises = pictures?.map((base64Data) => {
@@ -115,27 +116,27 @@ exports.createAmenity = async (req, res) => {
     const uploadedImages = await Promise.all(uploadPromises || []);
 
     // Update the property with the uploaded images
-    await newAmenity.update({ pictures: uploadedImages });
+    await newProject.update({ pictures: uploadedImages });
     res.status(201).json({
-      message: "Amenity created successfully",
-      newAmenity,
+      message: "Project created successfully",
+      newProject,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Failed to create Amenity",
+      message: "Failed to create Project",
       error: error.message,
     });
   }
 };
-exports.updateAmenity = async (req, res) => {
+exports.updateProject = async (req, res) => {
   try {
     const { id } = req.params;
-    const { menu_name, amenity_name, amenity_desc, pictures } = req.body;
+    const { menu_name, project_name, project_desc, pictures } = req.body;
 
-    // Find the existing Amenity by id
-    const amenity = await Amenity.findByPk(id);
-    if (!amenity) {
-      return res.status(404).json({ message: "Amenity not found" });
+    // Find the existing Project by id
+    const project = await Project.findByPk(id);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
     }
 
     // Check if the menu_name exists or create a new one
@@ -151,7 +152,7 @@ exports.updateAmenity = async (req, res) => {
     }
 
     // Prepare folder for Cloudinary images
-    const folderName = `${process.env.CLOUDINARY_DB}/Amenities_${id}`;
+    const folderName = `${process.env.CLOUDINARY_DB}/Projects_${id}`;
 
     // Fetch existing Cloudinary images
     const cloudinaryFiles = await cloudinary.api.resources({
@@ -186,43 +187,43 @@ exports.updateAmenity = async (req, res) => {
       ...uploadedImages, // Newly uploaded images
     ];
 
-    // Update the Amenity with new data
-    amenity.menu_id = menu.menu_id; // Update menu_id based on menu_name
-    amenity.amenity_name = amenity_name || amenity.amenity_name;
-    amenity.amenity_desc = amenity_desc || amenity.amenity_desc;
-    amenity.pictures = allImages;
+    // Update the Project with new data
+    project.menu_id = menu.menu_id; // Update menu_id based on menu_name
+    project.project_name = project_name || project.project_name;
+    project.project_desc = project_desc || project.project_desc;
+    project.pictures = allImages;
 
-    await amenity.save();
+    await project.save();
 
     res.status(200).json({
-      message: "Amenity updated successfully",
-      amenity,
+      message: "Project updated successfully",
+      project,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Failed to update Amenity",
+      message: "Failed to update Project",
       error: error.message,
     });
   }
 };
-exports.deleteAmenity = async (req, res) => {
+exports.deleteProject = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Find the amenity by ID
-    const amenity = await Amenity.findByPk(id);
-    if (!amenity) {
-      return res.status(404).json({ message: "Amenity not found" });
+    // Find the project by ID
+    const project = await Project.findByPk(id);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
     }
 
-    // Extract the pictures array from the amenity
-    const { pictures } = amenity;
+    // Extract the pictures array from the project
+    const { pictures } = project;
 
     // If there are pictures, proceed with deleting them from Cloudinary
     if (pictures && pictures.length > 0) {
       const folderName = pictures[0]?.folder;
 
-      // Delete all pictures associated with the amenity
+      // Delete all pictures associated with the project
       const deletePromises = pictures.map((picture) =>
         cloudinary.uploader.destroy(picture.public_id)
       );
@@ -243,13 +244,13 @@ exports.deleteAmenity = async (req, res) => {
       await cloudinary.api.delete_folder(folderName);
     }
 
-    // Delete the amenity from the database
-    await amenity.destroy();
+    // Delete the project from the database
+    await project.destroy();
 
-    res.status(200).json({ message: "Amenity deleted successfully" });
+    res.status(200).json({ message: "Project deleted successfully" });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to delete amenity", error: error.message });
+      .json({ message: "Failed to delete project", error: error.message });
   }
 };

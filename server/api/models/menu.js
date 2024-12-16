@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const Amenity = require("./amenities");
+const Project = require("./Projects");
 
 const Menu = sequelize.define("Menu", {
   menu_id: {

@@ -5,52 +5,6 @@ import { NavLink } from "react-router-dom";
 import { Menu } from "../../Constants/Conts";
 const { Panel } = Collapse;
 
-const menu = [
-  {
-    text: "Inquiries",
-    link: "/inquiries",
-  },
-  {
-    text: "Hero Section",
-    link: "/heroSection",
-  },
-  {
-    text: "Add Property",
-    link: "/addproperty",
-  },
-  {
-    text: "Update Property",
-    link: "/updateproperty",
-  },
-  {
-    text: "Delete Property",
-    link: "/deleteproperty",
-  },
-  {
-    text: "View Properties",
-    link: "/viewproperty",
-  },
-  {
-    text: "Add Testimonials",
-    link: "/createTestimonials",
-  },
-  {
-    text: "Delete Testimonial",
-    link: "/deleteTestimonials",
-  },
-  {
-    text: "Create Amenities",
-    link: "/createAmenities",
-  },
-  {
-    text: "Update Amenities",
-    link: "/updateAmenities",
-  },
-  {
-    text: "Delete Amenities",
-    link: "/deleteAmenities",
-  },
-];
 function SideDrawer() {
   const [open, setOpen] = useState(false);
   const [placement, setPlacement] = useState("left");

@@ -6,12 +6,12 @@ import TextArea from "antd/es/input/TextArea";
 import { PlusOutlined } from "@ant-design/icons";
 import GlobalForm from "../GlobalForm/GlobalForm";
 
-function CreateAmenities(props) {
+function CreateProjects(props) {
   return (
     <>
-      <GlobalForm pageMode="Add" type="Amenities" />
+      <GlobalForm pageMode="Add" type="Projects" />
     </>
   );
 }
 
-export default CreateAmenities;
+export default CreateProjects;

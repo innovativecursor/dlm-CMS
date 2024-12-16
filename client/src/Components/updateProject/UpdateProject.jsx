@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import GlobalForm from "../GlobalForm/GlobalForm";
 
-function ViewProp() {
+function UpdateProject() {
   const location = useLocation();
   const [record, setRecord] = useState(location.state);
   useEffect(() => {
@@ -16,10 +16,10 @@ function ViewProp() {
   return (
     <>
       {record ? (
-        <GlobalForm pageMode="View" record={record} type="Property" />
+        <GlobalForm pageMode="Update" record={record} type="Projects" />
       ) : null}
     </>
   );
 }
 
-export default ViewProp;
+export default UpdateProject;

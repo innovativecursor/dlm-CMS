@@ -38,7 +38,7 @@ function GlobalForm(props) {
   const [stationOptions, setStationOptions] = useState();
   const [imageClone, setImageClone] = useState(props?.record?.pictures);
   const [menuOptions, setMenuOptions] = useState([]);
-  const [amenities, setAmenities] = useState();
+  const [projects, setProjects] = useState();
   const [company_testimonialImage, setCompany_testimonialImage] = useState(
     props?.record?.pictures
   );
@@ -62,7 +62,7 @@ function GlobalForm(props) {
     setImageClone(answer?.data);
   };
   const callingOptions = async () => {
-    if (props?.type != "Amenities") {
+    if (props?.type != "Projects") {
       const resLocation = await getAxiosCall("/stationOptions");
       if (resLocation) {
         const collection = resLocation.data?.map((el) => ({
@@ -82,16 +82,16 @@ function GlobalForm(props) {
       }
     }
   };
-  const fetchAmenities = async (val) => {
-    const resami = await getAxiosCall("/getAmenitiesByMenuId", {
+  const fetchProjects = async (val) => {
+    const resami = await getAxiosCall("/getProjectsByMenuId", {
       menu_id: val,
     });
     if (resami) {
       const collection = resami.data?.map((el) => ({
-        label: el?.amenity_name,
-        value: el?.amenity_name,
+        label: el?.project_name,
+        value: el?.project_name,
       }));
-      setAmenities(collection);
+      setProjects(collection);
     }
   };
   const beforeUpload = (file) => {
@@ -221,14 +221,14 @@ function GlobalForm(props) {
               setInputs({});
             }
           }
-          if (props.type === "Amenities") {
+          if (props.type === "Projects") {
             let dummyinput = inputs;
             if (inputs?.pictures?.length === 0 || !inputs?.pictures) {
               dummyinput = { ...inputs, pictures: [] };
             }
             let answer;
 
-            answer = await postAxiosCall("/createAmenity", dummyinput);
+            answer = await postAxiosCall("/createProject", dummyinput);
             if (answer) {
               Swal.fire({
                 title: "Success",
@@ -276,10 +276,10 @@ function GlobalForm(props) {
               });
             }
           }
-          if (props.type === "Amenities") {
+          if (props.type === "Projects") {
             const updatedResult = await updateAxiosCall(
-              "/updateAmenity",
-              props?.record?.amenity_id,
+              "/updateProject",
+              props?.record?.project_id,
               inputs
             );
             if (updatedResult) {
@@ -291,7 +291,7 @@ function GlobalForm(props) {
                 allowOutsideClick: false,
               }).then(() => {
                 setInputs();
-                NavigateTo("/updateAmenities");
+                NavigateTo("/updateProjects");
               });
             }
           }
@@ -342,10 +342,10 @@ function GlobalForm(props) {
     let answer;
     if (props?.type === "Property" && props?.type) {
       answer = await deleteAxiosCall("/property", props?.record?.prop_id);
-    } else if (props?.type === "Amenities") {
+    } else if (props?.type === "Projects") {
       answer = await deleteAxiosCall(
-        "/deleteAmenity",
-        props?.record?.amenity_id
+        "/deleteProject",
+        props?.record?.project_id
       );
     } else if (props?.type === "Testimonials") {
       answer = await deleteAxiosCall(
@@ -368,7 +368,7 @@ function GlobalForm(props) {
           ? "/deleteTestimonials"
           : props?.type === "Property"
           ? "/deleteproperty"
-          : "/deleteAmenities"
+          : "/deleteProjects"
       );
     }
   };
@@ -588,8 +588,8 @@ function GlobalForm(props) {
             </Spin>
           </div>
         </PageWrapper>
-      ) : props?.type === "Amenities" ? (
-        <PageWrapper title={`${props?.pageMode} Amenities`}>
+      ) : props?.type === "Projects" ? (
+        <PageWrapper title={`${props?.pageMode} Projects`}>
           <div className="container mx-auto p-4 text-xl">
             <Form onFinish={submitForm}>
               <div className="grid grid-cols-1 my-2 sm:grid-cols-2 md:grid-cols-2 gap-6">
@@ -608,7 +608,7 @@ function GlobalForm(props) {
                     isMulti={false}
                     onChange={(e) => {
                       setInputs({ ...inputs, menu_name: e.label });
-                      fetchAmenities(e.value);
+                      fetchProjects(e.value);
                     }}
                     isClearable
                     options={menuOptions?.length != 0 ? menuOptions : []}
@@ -623,7 +623,7 @@ function GlobalForm(props) {
               <div className="grid grid-cols-1 my-2 sm:grid-cols-2 md:grid-cols-2 gap-6">
                 <div className="">
                   <label className="block text-sm font-medium text-gray-700">
-                    Name of the Amenity
+                    Name of the Project
                   </label>
                   <Creatable
                     isDisabled={
@@ -634,14 +634,14 @@ function GlobalForm(props) {
                     required
                     isMulti={false}
                     onChange={(e) => {
-                      setInputs({ ...inputs, amenity_name: e.value });
+                      setInputs({ ...inputs, project_name: e.value });
                     }}
                     isClearable
-                    options={amenities?.length != 0 ? amenities : []}
+                    options={projects?.length != 0 ? projects : []}
                     isSearchable
                     value={{
-                      label: inputs?.amenity_name,
-                      value: inputs?.amenity_name,
+                      label: inputs?.project_name,
+                      value: inputs?.project_name,
                     }}
                   />
                 </div>
@@ -653,13 +653,13 @@ function GlobalForm(props) {
                 <TextArea
                   disabled={props?.pageMode === "Delete" ? true : false}
                   type="text"
-                  id="amenity_desc"
-                  name="amenity_desc"
+                  id="project_desc"
+                  name="project_desc"
                   className="mt-1 p-2 block w-full border rounded-md"
                   onChange={(e) => {
                     setInputs({ ...inputs, [e.target.name]: e.target.value });
                   }}
-                  value={inputs?.amenity_desc}
+                  value={inputs?.project_desc}
                   required
                 />
               </div>
@@ -754,231 +754,8 @@ function GlobalForm(props) {
             </Form>
           </div>
         </PageWrapper>
-      ) : props?.type === "Hero" ? (
-        <PageWrapper title={`${props?.pageMode} Pictures`}>
-          <div className="container mx-auto p-4 text-xl">
-            <Form onFinish={submitForm}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
-              {/* Upload Pictures */}
-              {props.pageMode === "Add" || props.pageMode === "Update" ? (
-                <div className="my-5">
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Upload Pictures
-                  </label>
-                  <Upload
-                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                    // action="/upload.do"
-                    listType="picture-card"
-                    multiple={false}
-                    name="productImages"
-                    fileList={imageArray}
-                    maxCount={1}
-                    beforeUpload={beforeUpload} // Add the beforeUpload function
-                    accept=".png, .jpg, .jpeg, .webp" // Restrict file types for the file dialog
-                    onChange={(e) => {
-                      setImageArray(e.fileList);
-                    }}
-                  >
-                    <div>
-                      <PlusOutlined />
-                      <div
-                        style={{
-                          marginTop: 8,
-                        }}
-                      >
-                        Upload
-                      </div>
-                    </div>
-                  </Upload>
-                </div>
-              ) : (
-                ""
-              )}
-              {/* Pictures */}
-              {props?.pageMode !== "Add" ? (
-                <div className="my-5">
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Pictures
-                  </label>
-                  <div className="grid grid-cols-1 lg:grid lg:grid-cols-3 gap-y-4 gap-x-4">
-                    {imageClone?.map((el, index) => (
-                      <div className="card" key={index}>
-                        <div className="flex h-60 justify-center">
-                          <img
-                            src={el?.url}
-                            alt="asd4e"
-                            className="object-contain"
-                          />
-                        </div>
-                        {props.pageMode !== "View" &&
-                        props.pageMode !== "Delete" ? (
-                          <div className="flex flex-row justify-center items-end">
-                            <button
-                              className="my-4 text-black p-4 font-semibold bg-orange-400 hover:text-white rounded-lg"
-                              onClick={() => deleteModal(index)}
-                              type="button"
-                            >
-                              Delete Picture
-                            </button>
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
-              {props.pageMode === "View" ? (
-                ""
-              ) : (
-                <div className="acitonButtons w-full flex justify-center">
-                  <button
-                    className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center"
-                    type="submit"
-                  >
-                    {props.pageMode} Data
-                  </button>
-                </div>
-              )}
-            </Form>
-          </div>
-        </PageWrapper>
       ) : (
-        <PageWrapper title={`${props?.pageMode} Testimonials`}>
-          <div className="container mx-auto p-4 text-xl">
-            <Form onFinish={submitForm}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
-                <div className="">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Reviewer's Name
-                  </label>
-                  <Input
-                    name="reviewer_name"
-                    disabled={props?.pageMode === "Delete"}
-                    onChange={(e) => {
-                      setInputs({ ...inputs, [e.target.name]: e.target.value });
-                    }}
-                    required
-                    value={inputs?.reviewer_name}
-                  />
-                </div>
-              </div>
-              <div className="my-5">
-                <label className="block text-sm font-medium text-gray-700">
-                  Review
-                </label>
-                <TextArea
-                  disabled={props?.pageMode === "Delete" ? true : false}
-                  type="text"
-                  id="review"
-                  name="review"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  onChange={(e) => {
-                    setInputs({ ...inputs, [e.target.name]: e.target.value });
-                  }}
-                  value={inputs?.review}
-                  required
-                />
-              </div>
-              {/* Upload Pictures */}
-              {props.pageMode === "Add" ? (
-                <div className="my-5">
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Upload Customer's Picture
-                  </label>
-                  <Upload
-                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                    // action="/upload.do"
-                    listType="picture-card"
-                    multiple={false}
-                    name="productImages"
-                    fileList={imageArray}
-                    maxCount={1}
-                    beforeUpload={beforeUpload} // Add the beforeUpload function
-                    accept=".png, .jpg, .jpeg, .webp" // Restrict file types for the file dialog
-                    onChange={(e) => {
-                      setImageArray(e.fileList);
-                    }}
-                  >
-                    <div>
-                      <PlusOutlined />
-                      <div
-                        style={{
-                          marginTop: 8,
-                        }}
-                      >
-                        Upload
-                      </div>
-                    </div>
-                  </Upload>
-                </div>
-              ) : (
-                ""
-              )}
-              {/* Pictures */}
-              {props.pageMode !== "Add" && inputs?.pictures?.length !== 0 ? (
-                <div className="my-5">
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Pictures
-                  </label>
-                  <div className="w-full flex flex-row">
-                    {company_testimonialImage?.map((el, index) => (
-                      <div className="card" key={index}>
-                        <div className="flex h-60 justify-center">
-                          <img
-                            src={el?.url}
-                            alt="asd4e"
-                            className="object-contain"
-                          />
-                        </div>
-                        {props.pageMode !== "View" &&
-                        props.pageMode !== "Delete" ? (
-                          <div className="flex flex-row justify-center items-end">
-                            <button
-                              className="my-4 text-black p-4 font-semibold bg-orange-400 hover:text-white rounded-lg"
-                              onClick={() => deleteModal(index)}
-                              type="button"
-                            >
-                              Delete Picture
-                            </button>
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
-
-              <div className="acitonButtons w-full flex justify-center">
-                <button
-                  className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center"
-                  type="submit"
-                >
-                  {props.pageMode} Data
-                </button>
-              </div>
-            </Form>
-          </div>
-        </PageWrapper>
+        <></>
       )}
     </>
   );

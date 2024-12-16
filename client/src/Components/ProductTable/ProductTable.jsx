@@ -88,11 +88,11 @@ function ProductTable(props) {
       key: "reviewer_name",
     },
   ];
-  const amenities_col = [
+  const projects_col = [
     {
-      title: "Amenity Id",
-      dataIndex: "amenity_id",
-      key: "amenity_id",
+      title: "Project Id",
+      dataIndex: "project_id",
+      key: "project_id",
       fixed: "left",
     },
     {
@@ -140,9 +140,9 @@ function ProductTable(props) {
           .includes(value.toLowerCase()),
     },
     {
-      title: "Name of the Amenity",
-      dataIndex: "amenity_name",
-      key: "amenity_name",
+      title: "Name of the Project",
+      dataIndex: "project_name",
+      key: "project_name",
       filterDropdown: ({
         setSelectedKeys,
         selectedKeys,
@@ -151,7 +151,7 @@ function ProductTable(props) {
       }) => (
         <div style={{ padding: 8 }}>
           <Input
-            placeholder="Search Amenity Name"
+            placeholder="Search Project Name"
             value={selectedKeys[0]}
             onChange={(e) =>
               setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -178,7 +178,7 @@ function ProductTable(props) {
         </div>
       ),
       onFilter: (value, record) =>
-        record.amenity_name
+        record.project_name
           ?.toString()
           .toLowerCase()
           .includes(value.toLowerCase()),
@@ -186,13 +186,13 @@ function ProductTable(props) {
   ];
 
   useEffect(() => {
-    if (props?.type === "Amenities") {
-      fetchAmenities();
+    if (props?.type === "Projects") {
+      fetchProjects();
     }
   }, [props]);
 
-  const fetchAmenities = async () => {
-    const result = await getAxiosCall("/fetchAmenities");
+  const fetchProjects = async () => {
+    const result = await getAxiosCall("/fetchProjects");
     let flattenedResult = result?.data?.result?.map((el) => ({
       ...el,
       menu_name: el.Menu.menu_name,
@@ -245,8 +245,8 @@ function ProductTable(props) {
     } else if (props?.type == "Inquiries" && props?.type) {
       const result = await getAxiosCall("/fetchInquiries");
       setResult(result?.data);
-    } else if (props?.type == "Amenities" && props?.type) {
-      const result = await getAxiosCall("/fetchAmenities");
+    } else if (props?.type == "Projects" && props?.type) {
+      const result = await getAxiosCall("/fetchProjects");
       let flattenedResult = result?.data?.result?.map((el) => ({
         ...el,
         menu_name: el.Menu.menu_name,
@@ -289,11 +289,11 @@ function ProductTable(props) {
             />
           </PageWrapper>
         );
-      case "Amenities":
+      case "Projects":
         return (
-          <PageWrapper title={`${props.pageMode} Amenities`}>
+          <PageWrapper title={`${props.pageMode} Projects`}>
             <Table
-              columns={amenities_col}
+              columns={projects_col}
               dataSource={result}
               size="large"
               onRow={(record, rowIndex) => {
@@ -301,8 +301,8 @@ function ProductTable(props) {
                   onClick: () => {
                     navigateTo(
                       props.pageMode === "Delete"
-                        ? "/deleteAmenitiesinner"
-                        : "/updateAmenitiesinner",
+                        ? "/deleteProjectsinner"
+                        : "/updateProjectsinner",
                       { state: record }
                     );
                   },

@@ -2,17 +2,21 @@ const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 const Menu = require("./menu");
 
-const Amenity = sequelize.define("Amenity", {
-  amenity_id: {
+const Projects = sequelize.define("Projects", {
+  project_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  amenity_name: {
+  project_name: {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  amenity_desc: {
+  onGoingProject: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  project_desc: {
     type: DataTypes.STRING,
     allowNull: true,
   },
@@ -26,6 +30,6 @@ const Amenity = sequelize.define("Amenity", {
     },
   },
 });
-Menu.hasMany(Amenity, { foreignKey: "menu_id" });
-Amenity.belongsTo(Menu, { foreignKey: "menu_id" });
-module.exports = Amenity;
+Menu.hasMany(Projects, { foreignKey: "menu_id" });
+Projects.belongsTo(Menu, { foreignKey: "menu_id" });
+module.exports = Projects;

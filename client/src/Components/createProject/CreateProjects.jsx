@@ -1,12 +1,12 @@
 import React from "react";
 import GlobalForm from "../GlobalForm/GlobalForm";
 
-function CreateProduct() {
+function CreateProjects() {
   return (
     <>
-      <GlobalForm pageMode="Add" type="Property"  />
+      <GlobalForm pageMode="Add" type="Projects" />
     </>
   );
 }
 
-export default CreateProduct;
+export default CreateProjects;
