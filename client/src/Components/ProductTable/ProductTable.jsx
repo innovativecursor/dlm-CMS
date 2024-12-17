@@ -185,23 +185,6 @@ function ProductTable(props) {
     },
   ];
 
-  useEffect(() => {
-    if (props?.type === "Projects") {
-      fetchProjects();
-    }
-  }, []);
-
-  const fetchProjects = async () => {
-    const result = await getAxiosCall("/fetchProjects");
-    let flattenedResult = result?.data?.result?.map((el) => ({
-      ...el,
-      menu_name: el.Menu.menu_name,
-      menu_id: el.Menu.menu_id,
-      Menu: undefined, // Remove the Menu object
-    }));
-    setResult(flattenedResult);
-  };
-
   const [result, setResult] = useState(null);
   const [switchRoutes, setSwitchRoutes] = useState(false);
   const navigateTo = useNavigate();
@@ -235,13 +218,7 @@ function ProductTable(props) {
   }, [props]);
 
   const answer = async () => {
-    if (props?.type == "Testimonials" && props?.type) {
-      const result = await getAxiosCall("/fetchTestimonials");
-      setResult(result?.data);
-    } else if (props?.type == "Property" && props?.type) {
-      const result = await getAxiosCall("/properties");
-      setResult(result?.data?.properties);
-    } else if (props?.type == "Inquiries" && props?.type) {
+    if (props?.type == "Inquiries" && props?.type) {
       const result = await getAxiosCall("/fetchInquiries");
       setResult(result?.data);
     } else if (props?.type == "Projects" && props?.type) {
@@ -257,37 +234,6 @@ function ProductTable(props) {
   };
   const renderTable = () => {
     switch (props.type) {
-      case "Property":
-        return (
-          <PageWrapper title={`${props.pageMode} Properties`}>
-            <Table
-              columns={columns}
-              dataSource={result}
-              size="large"
-              // style={{
-              //   width: "100rem",
-              // }}
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: () => {
-                    navigateTo(
-                      props.pageMode === "View"
-                        ? "/viewinner"
-                        : props.pageMode === "Delete"
-                        ? "/deleteinner"
-                        : "/updateinner",
-                      { state: record }
-                    );
-                  },
-                };
-              }}
-              scroll={{
-                x: 1000,
-                y: 1500,
-              }}
-            />
-          </PageWrapper>
-        );
       case "Projects":
         return (
           <PageWrapper title={`${props.pageMode} Projects`}>
@@ -340,22 +286,6 @@ function ProductTable(props) {
               <p>{inqMessage}</p>
             </Modal>
           </>
-        );
-      case "Testimonials":
-        return (
-          <PageWrapper title={`${props.type}`}>
-            <Table
-              columns={testimonials_col}
-              dataSource={result}
-              size="large"
-              onRow={(record) => ({
-                onClick: () => {
-                  navigateTo("/deleteTestimonialsinner", { state: record });
-                },
-              })}
-              scroll={{ x: 1000, y: 1500 }}
-            />
-          </PageWrapper>
         );
       case "Users":
         return (
