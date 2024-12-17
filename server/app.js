@@ -18,10 +18,11 @@ const options = {
   credentials: true,
   origin: [
     "http://localhost:3000",
-    "http://localhost:3003",
-    // "https://propshopworldwide.com",
-    // "https://dev.propshopworldwide.com",
-    "http://admin.thepropshopworldwide.com",
+    "http://localhost:3004",
+    "https://dlmrealtyandconstructioncorp.com",
+    "https://www.dlmrealtyandconstructioncorp.com",
+    "https://admin.dlmrealtyandconstructioncorp.com",
+    "https://www.admin.dlmrealtyandconstructioncorp.com",
     // "http://localhost:8080",
   ],
 };

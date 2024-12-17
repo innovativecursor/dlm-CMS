@@ -20,6 +20,7 @@ import ResetPassword from "../Components/resetPassword/ResetPassword";
 import CreateProjects from "../Components/createProject/CreateProjects";
 import Updateprojects from "../Components/updateProject/UpdateProject";
 import DeleteProjects from "../Components/deleteProjects/DeleteProjects";
+import Careers from "../Components/careers/Careers";
 
 function Navigation(props) {
   const location = useLocation();
@@ -63,6 +64,7 @@ function Navigation(props) {
                 element={<ProductTable pageMode="Delete" type="Projects" />}
               />
               <Route path="/deleteProjectsinner" element={<DeleteProjects />} />
+              <Route path="/careers" element={<Careers />} />
             </Route>
             <Route path="*" element={<Robots />} />
           </Routes>

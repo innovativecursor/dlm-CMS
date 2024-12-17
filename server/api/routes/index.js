@@ -5,6 +5,8 @@ const userController = require("../controllers/userController");
 const inquiryController = require("../controllers/inquiryController");
 const projectController = require("../controllers/projectController");
 const authenticateUser = require("../middleware/authenticateUser");
+const careerController = require("../controllers/careerController");
+
 const { apiLimiter } = require("../middleware/apiLimiter");
 
 // User routes
@@ -45,5 +47,10 @@ router.delete(
   authenticateUser,
   projectController.deleteProject
 );
+//Careers
+router.get("/careers", careerController.getAllCareers);
+router.post("/careers", careerController.createCareer);
+router.put("/careers/:id", careerController.updateCareer);
+router.delete("/careers/:id", careerController.deleteCareer);
 
 module.exports = router;

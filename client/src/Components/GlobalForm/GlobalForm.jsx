@@ -280,7 +280,6 @@ function GlobalForm(props) {
   const remove = async () => {
     let answer;
     if (props?.type === "Projects" && props?.type) {
-      debugger;
       answer = await deleteAxiosCall(
         "/deleteProject",
         props?.record?.project_id
@@ -344,364 +343,188 @@ function GlobalForm(props) {
 
   return (
     <>
-      {props?.type == "Property" ? (
-        <PageWrapper title={`${props?.pageMode} Property`}>
-          <div className="container mx-auto p-4 text-xl">
-            <Spin spinning={loading}>
-              <Form onFinish={submitForm}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Location
-                    </label>
-                    <Input
-                      disabled={
-                        props?.pageMode === "Delete" ||
-                        props?.pageMode === "View"
-                          ? true
-                          : false
-                      }
-                      required
-                      type="text"
-                      id="location"
-                      placeholder="Enter Name of the Location Example: Mariveles,Batan"
-                      name="location"
-                      className="mt-1 p-2 block w-full border rounded-md"
-                      onChange={(e) => {
-                        setInputs({
-                          ...inputs,
-                          [e.target.name]: e.target.value,
-                        });
-                      }}
-                      value={inputs?.location}
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Station Number
-                    </label>
-                    <Creatable
-                      isDisabled={
-                        props?.pageMode === "Delete" ||
-                        props?.pageMode === "View"
-                          ? true
-                          : false
-                      }
-                      placeholder="Add Station Number"
-                      required
-                      isMulti={false}
-                      onChange={(e) => {
-                        if (e && /^[0-9]*$/.test(e.value)) {
-                          setInputs({
-                            ...inputs,
-                            station_number: Number(e.value),
-                          });
-                        } else {
-                          // Optional: Notify the user about invalid input
-                          console.error("Only numeric values are allowed");
-                        }
-                      }}
-                      isClearable
-                      options={
-                        stationOptions?.length !== 0 ? stationOptions : []
-                      }
-                      isSearchable
-                      value={{
-                        label: inputs?.station_number,
-                        value: inputs?.station_number,
-                      }}
-                      formatCreateLabel={(inputValue) => {
-                        // Prevent creating non-numeric options
-                        return /^[0-9]*$/.test(inputValue)
-                          ? inputValue
-                          : "Invalid input";
-                      }}
-                    />
-                  </div>
-                </div>
-                {/* Upload Pictures */}
-                {props.pageMode === "Add" || props.pageMode === "Update" ? (
-                  <div className="my-5">
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Upload Pictures
-                    </label>
-                    <Upload
-                      action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                      // action="/upload.do"
-                      listType="picture-card"
-                      multiple={false}
-                      name="productImages"
-                      fileList={imageArray}
-                      maxCount={4}
-                      onChange={(e) => {
-                        setImageArray(e.fileList);
-                      }}
-                    >
-                      <div>
-                        <PlusOutlined />
-                        <div
-                          style={{
-                            marginTop: 8,
-                          }}
-                        >
-                          Upload
-                        </div>
-                      </div>
-                    </Upload>
-                  </div>
-                ) : (
-                  ""
-                )}
-                {/* Pictures */}
-                {props?.pageMode !== "Add" ? (
-                  <div className="my-5">
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Pictures
-                    </label>
-                    <div className="grid grid-cols-1 lg:grid lg:grid-cols-3 gap-y-4 gap-x-4">
-                      {imageClone?.map((el, index) => (
-                        <div className="card" key={index}>
-                          <div className="flex h-60 justify-center">
-                            <img
-                              src={el?.url}
-                              alt="asd4e"
-                              className="object-contain"
-                            />
-                          </div>
-                          {props.pageMode !== "View" &&
-                          props.pageMode !== "Delete" ? (
-                            <div className="flex flex-row justify-center items-end">
-                              <button
-                                className="my-4 text-black p-4 font-semibold bg-orange-400 hover:text-white rounded-lg"
-                                onClick={() => deleteModal(index)}
-                                type="button"
-                              >
-                                Delete Picture
-                              </button>
-                            </div>
-                          ) : (
-                            ""
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-                {props.pageMode === "View" ? (
-                  ""
-                ) : (
-                  <div className="acitonButtons w-full flex justify-center">
-                    <button
-                      className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center"
-                      type="submit"
-                    >
-                      {props.pageMode} Data
-                    </button>
-                  </div>
-                )}
-              </Form>
-            </Spin>
-          </div>
-        </PageWrapper>
-      ) : props?.type === "Projects" ? (
-        <PageWrapper title={`${props?.pageMode} Projects`}>
-          <div className="container mx-auto p-4 text-xl">
-            <Form onFinish={submitForm}>
-              <div className="grid grid-cols-1 my-2 sm:grid-cols-2 md:grid-cols-2 gap-6">
-                <div className="">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Menu
-                  </label>
-                  <Creatable
-                    placeholder="Menu"
-                    isDisabled={
-                      props?.pageMode === "Delete" || props?.pageMode === "View"
-                        ? true
-                        : false
-                    }
-                    required
-                    isMulti={false}
-                    onChange={(e) => {
-                      setInputs({ ...inputs, menu_name: e.label });
-                      fetchProjects(e.value);
-                    }}
-                    isClearable
-                    options={menuOptions?.length != 0 ? menuOptions : []}
-                    isSearchable
-                    value={{
-                      label: inputs?.menu_name,
-                      value: inputs?.menu_id,
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 my-2 sm:grid-cols-2 md:grid-cols-2 gap-6">
-                <div className="">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Name of the Project
-                  </label>
-                  <Creatable
-                    isDisabled={
-                      props?.pageMode === "Delete" || props?.pageMode === "View"
-                        ? true
-                        : false
-                    }
-                    required
-                    isMulti={false}
-                    onChange={(e) => {
-                      setInputs({ ...inputs, project_name: e.value });
-                    }}
-                    isClearable
-                    options={projects?.length != 0 ? projects : []}
-                    isSearchable
-                    value={{
-                      label: inputs?.project_name,
-                      value: inputs?.project_name,
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row items-center gap-4">
+      <PageWrapper title={`${props?.pageMode} Projects`}>
+        <div className="container mx-auto p-4 text-xl">
+          <Form onFinish={submitForm}>
+            <div className="grid grid-cols-1 my-2 sm:grid-cols-2 md:grid-cols-2 gap-6">
+              <div className="">
                 <label className="block text-sm font-medium text-gray-700">
-                  Check this if it's an Ongoing Project
+                  Menu
                 </label>
-                <Checkbox
-                  name="onGoingProject"
-                  disabled={props?.pageMode === "Delete"}
-                  checked={inputs?.onGoingProject}
-                  onChange={() => {
-                    debugger;
-                    setcheck(!check),
-                      setInputs({
-                        ...inputs,
-                        onGoingProject: !inputs?.onGoingProject,
-                      });
-                  }}
-                />
-              </div>
-              <div className="my-5">
-                <label className="block text-sm font-medium text-gray-700">
-                  Description
-                </label>
-                <TextArea
-                  disabled={props?.pageMode === "Delete" ? true : false}
-                  type="text"
-                  id="project_desc"
-                  name="project_desc"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  onChange={(e) => {
-                    setInputs({ ...inputs, [e.target.name]: e.target.value });
-                  }}
-                  value={inputs?.project_desc}
+                <Creatable
+                  placeholder="Menu"
+                  isDisabled={
+                    props?.pageMode === "Delete" || props?.pageMode === "View"
+                      ? true
+                      : false
+                  }
                   required
+                  isMulti={false}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, menu_name: e.label });
+                    fetchProjects(e.value);
+                  }}
+                  isClearable
+                  options={menuOptions?.length != 0 ? menuOptions : []}
+                  isSearchable
+                  value={{
+                    label: inputs?.menu_name,
+                    value: inputs?.menu_id,
+                  }}
                 />
               </div>
-              {/* Upload Pictures */}
-              {props.pageMode === "Add" || props.pageMode === "Update" ? (
-                <div className="my-5">
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Upload Pictures
-                  </label>
-                  <Upload
-                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                    // action="/upload.do"
-                    listType="picture-card"
-                    multiple={false}
-                    name="productImages"
-                    fileList={imageArray}
-                    maxCount={4}
-                    onChange={(e) => {
-                      setImageArray(e.fileList);
-                    }}
-                  >
-                    <div>
-                      <PlusOutlined />
-                      <div
-                        style={{
-                          marginTop: 8,
-                        }}
-                      >
-                        Upload
-                      </div>
+            </div>
+            <div className="grid grid-cols-1 my-2 sm:grid-cols-2 md:grid-cols-2 gap-6">
+              <div className="">
+                <label className="block text-sm font-medium text-gray-700">
+                  Name of the Project
+                </label>
+                <Creatable
+                  isDisabled={
+                    props?.pageMode === "Delete" || props?.pageMode === "View"
+                      ? true
+                      : false
+                  }
+                  required
+                  isMulti={false}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, project_name: e.value });
+                  }}
+                  isClearable
+                  options={projects?.length != 0 ? projects : []}
+                  isSearchable
+                  value={{
+                    label: inputs?.project_name,
+                    value: inputs?.project_name,
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex flex-row items-center gap-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Check this if it's an Ongoing Project
+              </label>
+              <Checkbox
+                name="onGoingProject"
+                disabled={props?.pageMode === "Delete"}
+                checked={inputs?.onGoingProject}
+                onChange={() => {
+                  setcheck(!check),
+                    setInputs({
+                      ...inputs,
+                      onGoingProject: !inputs?.onGoingProject,
+                    });
+                }}
+              />
+            </div>
+            <div className="my-5">
+              <label className="block text-sm font-medium text-gray-700">
+                Description
+              </label>
+              <TextArea
+                disabled={props?.pageMode === "Delete" ? true : false}
+                type="text"
+                id="project_desc"
+                name="project_desc"
+                className="mt-1 p-2 block w-full border rounded-md"
+                onChange={(e) => {
+                  setInputs({ ...inputs, [e.target.name]: e.target.value });
+                }}
+                value={inputs?.project_desc}
+                required
+              />
+            </div>
+            {/* Upload Pictures */}
+            {props.pageMode === "Add" || props.pageMode === "Update" ? (
+              <div className="my-5">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Upload Pictures
+                </label>
+                <Upload
+                  action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                  // action="/upload.do"
+                  listType="picture-card"
+                  multiple={false}
+                  name="productImages"
+                  fileList={imageArray}
+                  maxCount={4}
+                  onChange={(e) => {
+                    setImageArray(e.fileList);
+                  }}
+                >
+                  <div>
+                    <PlusOutlined />
+                    <div
+                      style={{
+                        marginTop: 8,
+                      }}
+                    >
+                      Upload
                     </div>
-                  </Upload>
-                </div>
-              ) : (
-                ""
-              )}
-              {/* Pictures */}
-              {props?.pageMode !== "Add" ? (
-                <div className="my-5">
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Pictures
-                  </label>
-                  <div className="w-full flex flex-row">
-                    {imageClone?.map((el, index) => (
-                      <div className="card" key={index}>
-                        <div className="flex h-60 justify-center">
-                          <img
-                            src={el?.url}
-                            alt="asd4e"
-                            className="object-contain"
-                          />
-                        </div>
-                        {props.pageMode !== "View" &&
-                        props.pageMode !== "Delete" ? (
-                          <div className="flex flex-row justify-center items-end">
-                            <button
-                              className="my-4 text-black p-4 font-semibold bg-orange-400 hover:text-white rounded-lg"
-                              onClick={() => deleteModal(index)}
-                              type="button"
-                            >
-                              Delete Picture
-                            </button>
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    ))}
                   </div>
+                </Upload>
+              </div>
+            ) : (
+              ""
+            )}
+            {/* Pictures */}
+            {props?.pageMode !== "Add" ? (
+              <div className="my-5">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Pictures
+                </label>
+                <div className="w-full flex flex-row">
+                  {imageClone?.map((el, index) => (
+                    <div className="card" key={index}>
+                      <div className="flex h-60 justify-center">
+                        <img
+                          src={el?.url}
+                          alt="asd4e"
+                          className="object-contain"
+                        />
+                      </div>
+                      {props.pageMode !== "View" &&
+                      props.pageMode !== "Delete" ? (
+                        <div className="flex flex-row justify-center items-end">
+                          <button
+                            className="my-4 text-black p-4 font-semibold bg-orange-400 hover:text-white rounded-lg"
+                            onClick={() => deleteModal(index)}
+                            type="button"
+                          >
+                            Delete Picture
+                          </button>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ) : (
-                ""
-              )}
-              {props.pageMode === "View" ? (
-                ""
-              ) : (
-                <div className="acitonButtons w-full flex justify-center">
-                  <button
-                    className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center"
-                    type="submit"
-                  >
-                    {props.pageMode} Data
-                  </button>
-                </div>
-              )}
-            </Form>
-          </div>
-        </PageWrapper>
-      ) : (
-        <></>
-      )}
+              </div>
+            ) : (
+              ""
+            )}
+            {props.pageMode === "View" ? (
+              ""
+            ) : (
+              <div className="acitonButtons w-full flex justify-center">
+                <button
+                  className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center"
+                  type="submit"
+                >
+                  {props.pageMode} Data
+                </button>
+              </div>
+            )}
+          </Form>
+        </div>
+      </PageWrapper>
     </>
   );
 }
