@@ -39,9 +39,8 @@ function GlobalForm(props) {
   const [imageClone, setImageClone] = useState(props?.record?.pictures);
   const [menuOptions, setMenuOptions] = useState([]);
   const [projects, setProjects] = useState();
-  const [company_testimonialImage, setCompany_testimonialImage] = useState(
-    props?.record?.pictures
-  );
+  const [check, setcheck] = useState(false);
+
   const NavigateTo = useNavigate();
   useEffect(() => {
     callingOptions();
@@ -179,55 +178,14 @@ function GlobalForm(props) {
             // Converting images to base64
             await convertAllToBase64();
           }
-          if (props.type === "Testimonials") {
-            let dummyinput = inputs;
-            if (inputs?.pictures?.length === 0 || !inputs?.pictures) {
-              dummyinput = { ...inputs, pictures: [] };
-            }
-            let answer;
-            answer = await postAxiosCall("/createTestimonial", dummyinput);
-            if (answer) {
-              Swal.fire({
-                title: "Success",
-                text: answer?.message,
-                icon: "success",
-                confirmButtonText: "Great!",
-                allowOutsideClick: false,
-              }).then(() => {
-                window.location.reload(true);
-              });
-              setInputs({});
-            }
-          }
-
-          if (props.type === "Property") {
-            let dummyinput = inputs;
-            if (inputs?.pictures?.length === 0 || !inputs?.pictures) {
-              dummyinput = { ...inputs, pictures: [] };
-            }
-            let answer;
-
-            answer = await postAxiosCall("/createProperty", dummyinput);
-            if (answer) {
-              Swal.fire({
-                title: "Success",
-                text: answer?.message,
-                icon: "success",
-                confirmButtonText: "Great!",
-                allowOutsideClick: false,
-              }).then(() => {
-                window.location.reload(true);
-              });
-              setInputs({});
-            }
-          }
           if (props.type === "Projects") {
             let dummyinput = inputs;
+
             if (inputs?.pictures?.length === 0 || !inputs?.pictures) {
               dummyinput = { ...inputs, pictures: [] };
             }
+            dummyinput = { ...inputs, onGoingProject: check };
             let answer;
-
             answer = await postAxiosCall("/createProject", dummyinput);
             if (answer) {
               Swal.fire({
@@ -256,25 +214,6 @@ function GlobalForm(props) {
           } else {
             //merging the new images (if uploaded)
             await convertAllToBase64();
-          }
-          if (props.type === "Property") {
-            const updatedResult = await updateAxiosCall(
-              "/property",
-              props?.record?.prop_id,
-              inputs
-            );
-            if (updatedResult) {
-              Swal.fire({
-                title: "Success",
-                text: updatedResult?.message,
-                icon: "success",
-                confirmButtonText: "Great!",
-                allowOutsideClick: false,
-              }).then(() => {
-                setInputs();
-                NavigateTo("/updateproperty");
-              });
-            }
           }
           if (props.type === "Projects") {
             const updatedResult = await updateAxiosCall(
@@ -340,17 +279,11 @@ function GlobalForm(props) {
   };
   const remove = async () => {
     let answer;
-    if (props?.type === "Property" && props?.type) {
-      answer = await deleteAxiosCall("/property", props?.record?.prop_id);
-    } else if (props?.type === "Projects") {
+    if (props?.type === "Projects" && props?.type) {
+      debugger;
       answer = await deleteAxiosCall(
         "/deleteProject",
         props?.record?.project_id
-      );
-    } else if (props?.type === "Testimonials") {
-      answer = await deleteAxiosCall(
-        "/deleteTestimonial",
-        props?.record?.testimonial_id
       );
     }
 
@@ -363,13 +296,7 @@ function GlobalForm(props) {
         allowOutsideClick: false,
       });
       setInputs();
-      NavigateTo(
-        props?.type === "Testimonials"
-          ? "/deleteTestimonials"
-          : props?.type === "Property"
-          ? "/deleteproperty"
-          : "/deleteProjects"
-      );
+      NavigateTo("/deleteProjects");
     }
   };
   const deleteImage = async (imageIndex) => {
@@ -645,6 +572,24 @@ function GlobalForm(props) {
                     }}
                   />
                 </div>
+              </div>
+              <div className="flex flex-row items-center gap-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Check this if it's an Ongoing Project
+                </label>
+                <Checkbox
+                  name="onGoingProject"
+                  disabled={props?.pageMode === "Delete"}
+                  checked={inputs?.onGoingProject}
+                  onChange={() => {
+                    debugger;
+                    setcheck(!check),
+                      setInputs({
+                        ...inputs,
+                        onGoingProject: !inputs?.onGoingProject,
+                      });
+                  }}
+                />
               </div>
               <div className="my-5">
                 <label className="block text-sm font-medium text-gray-700">

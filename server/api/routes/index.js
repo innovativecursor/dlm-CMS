@@ -31,17 +31,17 @@ router.get("/fetchMenuItems", projectController.getMenuOptions);
 router.get("/fetchProjects", projectController.getProjects);
 router.get("/getProjectsByMenuId", projectController.getProjectsByMenuId);
 router.post(
-  "/createAmenity",
+  "/createProject",
   authenticateUser,
   projectController.createProject
 );
 router.put(
-  "/updateAmenity/:id",
+  "/updateProject/:id",
   authenticateUser,
   projectController.updateProject
 );
 router.delete(
-  "/deleteAmenity/:id",
+  "/deleteProject/:id",
   authenticateUser,
   projectController.deleteProject
 );

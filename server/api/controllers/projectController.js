@@ -68,7 +68,13 @@ exports.getProjects = async (req, res) => {
         model: Menu,
         attributes: ["menu_name", "menu_id"], // Fetch menu_name from Menu model
       },
-      attributes: ["project_id", "project_name", "project_desc", "pictures"],
+      attributes: [
+        "project_id",
+        "project_name",
+        "onGoingProject",
+        "project_desc",
+        "pictures",
+      ],
     });
     const result = formattedResult(findAll);
     res.status(200).json({ result });
@@ -99,6 +105,7 @@ exports.createProject = async (req, res) => {
     // Create the new Project
     const newProject = await Project.create({
       project_name,
+      onGoingProject,
       project_desc,
       pictures: [],
       menu_id: menu.menu_id, // Use the menu_id from the created/found menu
@@ -119,7 +126,6 @@ exports.createProject = async (req, res) => {
     await newProject.update({ pictures: uploadedImages });
     res.status(201).json({
       message: "Project created successfully",
-      newProject,
     });
   } catch (error) {
     res.status(500).json({
@@ -131,7 +137,8 @@ exports.createProject = async (req, res) => {
 exports.updateProject = async (req, res) => {
   try {
     const { id } = req.params;
-    const { menu_name, project_name, project_desc, pictures } = req.body;
+    const { menu_name, project_name, onGoingProject, project_desc, pictures } =
+      req.body;
 
     // Find the existing Project by id
     const project = await Project.findByPk(id);
@@ -190,14 +197,16 @@ exports.updateProject = async (req, res) => {
     // Update the Project with new data
     project.menu_id = menu.menu_id; // Update menu_id based on menu_name
     project.project_name = project_name || project.project_name;
+    project.onGoingProject = onGoingProject;
     project.project_desc = project_desc || project.project_desc;
     project.pictures = allImages;
-
+    console.log("project", project);
     await project.save();
+
+    deleteUnusedMenus();
 
     res.status(200).json({
       message: "Project updated successfully",
-      project,
     });
   } catch (error) {
     res.status(500).json({
@@ -206,6 +215,41 @@ exports.updateProject = async (req, res) => {
     });
   }
 };
+const deleteUnusedMenus = async () => {
+  try {
+    // Find all Menu IDs that have no associated Projects
+    const unusedMenus = await Menu.findAll({
+      include: [
+        {
+          model: Project,
+          attributes: [], // No need to fetch Project data
+          required: false, // LEFT JOIN: Include even if no Projects exist
+        },
+      ],
+      where: {
+        "$Projects.project_id$": { [Op.is]: null }, // Check where no Projects are associated
+      },
+    });
+
+    // Extract unused Menu IDs
+    const unusedMenuIds = unusedMenus.map((menu) => menu.menu_id);
+
+    if (unusedMenuIds.length > 0) {
+      // Delete unused Menu records
+      await Menu.destroy({
+        where: {
+          menu_id: { [Op.in]: unusedMenuIds },
+        },
+      });
+      console.log(`Deleted unused Menus: ${unusedMenuIds.join(", ")}`);
+    } else {
+      console.log("No unused Menus to delete.");
+    }
+  } catch (error) {
+    console.error("Error deleting unused Menus:", error.message);
+  }
+};
+
 exports.deleteProject = async (req, res) => {
   try {
     const { id } = req.params;
@@ -246,6 +290,8 @@ exports.deleteProject = async (req, res) => {
 
     // Delete the project from the database
     await project.destroy();
+
+    deleteUnusedMenus();
 
     res.status(200).json({ message: "Project deleted successfully" });
   } catch (error) {

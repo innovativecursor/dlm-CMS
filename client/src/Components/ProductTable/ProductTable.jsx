@@ -189,7 +189,7 @@ function ProductTable(props) {
     if (props?.type === "Projects") {
       fetchProjects();
     }
-  }, [props]);
+  }, []);
 
   const fetchProjects = async () => {
     const result = await getAxiosCall("/fetchProjects");
@@ -200,7 +200,6 @@ function ProductTable(props) {
       Menu: undefined, // Remove the Menu object
     }));
     setResult(flattenedResult);
-    setFilteredData(flattenedResult); // Initialize filtered data
   };
 
   const [result, setResult] = useState(null);
