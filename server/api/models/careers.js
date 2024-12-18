@@ -12,10 +12,5 @@ const Careers = sequelize.define("Careers", {
     allowNull: false,
     defaultValue: [],
   },
-  contactDetails: {
-    type: DataTypes.JSON,
-    allowNull: false,
-    defaultValue: { contact1: "", contact2: "" },
-  },
 });
 module.exports = Careers;

@@ -38,23 +38,16 @@ const jobOpeningSchema = Joi.object({
       "array.min": "At least one job opening is required.",
       "any.required": "Job openings field is required.",
     }),
-  contactDetails: Joi.object({
-    contact1: Joi.string().required().messages({
-      "string.empty": "Contact 1 cannot be empty.",
-      "string.pattern.base":
-        "Contact 1 must contain only numbers (10-15 digits).",
-      "any.required": "Contact 1 is required.",
-    }),
-    contact2: Joi.string().required().messages({
-      "string.empty": "Contact 2 cannot be empty.",
-      "string.pattern.base":
-        "Contact 2 must contain only numbers (10-15 digits).",
-      "any.required": "Contact 2 is required.",
-    }),
-  }).required(),
+  contactDetails1: Joi.string().required().messages({
+    "string.empty": "Contact 1 cannot be empty.",
+    "any.required": "Contact 1 is required.",
+  }),
+  contactDetails2: Joi.string().required().messages({
+    "string.empty": "Contact 2 cannot be empty.",
+    "any.required": "Contact 2 is required.",
+  }),
 });
 
-// Controller Logic
 const CareersController = {
   // Fetch all career entries
   async getAllCareers(req, res) {
@@ -70,18 +63,17 @@ const CareersController = {
 
   // Add new career entry
   async createCareer(req, res) {
-    const { error, value } = jobOpeningSchema.validate(req.body);
+    const { jobOpenings } = req.body;
 
-    if (error) {
-      return res
-        .status(400)
-        .json({ success: false, message: error.details[0].message });
-    }
+    // if (error) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: error.details[0].message });
+    // }
 
     try {
       const newCareer = await Careers.create({
-        jobOpenings: value.jobOpenings,
-        contactDetails: value.contactDetails,
+        jobOpenings: jobOpenings,
       });
 
       return res.status(201).json({
@@ -90,6 +82,7 @@ const CareersController = {
         data: newCareer,
       });
     } catch (err) {
+      console.log("err", err);
       return res
         .status(500)
         .json({ success: false, message: "Server error", error: err });
@@ -99,13 +92,13 @@ const CareersController = {
   // Update an existing career entry
   async updateCareer(req, res) {
     const { id } = req.params;
+    const { jobOpenings } = req.body;
 
-    const { error, value } = jobOpeningSchema.validate(req.body);
-    if (error) {
-      return res
-        .status(400)
-        .json({ success: false, message: error.details[0].message });
-    }
+    // if (error) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: error.details[0].message });
+    // }
 
     try {
       const career = await Careers.findByPk(id);
@@ -116,8 +109,7 @@ const CareersController = {
           .json({ success: false, message: "Job openings not found." });
       }
 
-      career.jobOpenings = value.jobOpenings;
-      career.contactDetails = value.contactDetails;
+      career.jobOpenings = jobOpenings;
 
       await career.save();
 
@@ -127,6 +119,7 @@ const CareersController = {
         data: career,
       });
     } catch (err) {
+      console.log("err", err);
       return res
         .status(500)
         .json({ success: false, message: "Server error", error: err });

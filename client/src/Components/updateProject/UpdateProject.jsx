@@ -7,7 +7,6 @@ function UpdateProject() {
   const [record, setRecord] = useState(location.state);
   useEffect(() => {
     if (location?.state) {
-      "Location state", location.state;
       let asd = { ...location.state };
       setRecord(asd);
     }

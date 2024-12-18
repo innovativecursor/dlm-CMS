@@ -1,24 +1,36 @@
 import React, { useEffect, useState } from "react";
 import PageWrapper from "../PageContainer/PageWrapper";
 import { Button, Form, Input, InputNumber } from "antd";
-import { postAxiosCall } from "../../Axios/UniversalAxiosCalls";
+import {
+  deleteAxiosCall,
+  getAxiosCall,
+  postAxiosCall,
+  updateAxiosCall,
+} from "../../Axios/UniversalAxiosCalls";
 import Swal from "sweetalert2";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
-function Careers(props) {
+function DeleteCareers(props) {
   const [jobOpenings, setJobOpenings] = useState([]);
+  const [contactDetails1, setContactDetails1] = useState("");
+  const [contactDetails2, setContactDetails2] = useState("");
+  const location = useLocation();
+  const [record, setRecord] = useState(location.state);
+
+  const NavigateTo = useNavigate();
+
   useEffect(() => {
+    if (location?.state) {
+      let asd = { ...location.state };
+      setRecord(asd);
+    }
     addSite();
   }, []);
 
   // Add a new site with default structure
-  const addSite = () => {
-    setJobOpenings([
-      ...jobOpenings,
-      {
-        site: null,
-        workers: [{ designation: null, count: 1 }],
-      },
-    ]);
+  const addSite = async () => {
+    const result = await getAxiosCall("/careers");
+    setJobOpenings(record?.jobOpenings || []);
   };
 
   // Add a worker record to a specific site
@@ -30,7 +42,6 @@ function Careers(props) {
 
   // Delete a site
   const deleteSite = (index) => {
-    debugger;
     if (jobOpenings?.length !== 1) {
       const updatedJobOpenings = jobOpenings.filter((_, i) => i !== index);
       setJobOpenings(updatedJobOpenings);
@@ -59,13 +70,14 @@ function Careers(props) {
     updatedJobOpenings[siteIndex].workers[workerIndex][field] = value;
     setJobOpenings(updatedJobOpenings);
   };
-  //Sending Data
+
+  // Sending Data
   const sendData = async () => {
     const payload = {
       jobOpenings,
     };
     try {
-      const result = postAxiosCall("/careers", payload);
+      const result = await deleteAxiosCall("/careers", record?.career_id);
       if (result) {
         Swal.fire({
           title: "Success",
@@ -74,19 +86,20 @@ function Careers(props) {
           confirmButtonText: "Great!",
           allowOutsideClick: false,
         }).then(() => {
-          window.location.reload(true);
+          NavigateTo("/deleteCareers");
         });
       }
     } catch (error) {
       Swal.fire({
-        title: "failure",
+        title: "Failure",
         text: error?.message,
         icon: "error",
-        confirmButtonText: "Great!",
+        confirmButtonText: "Try Again",
         allowOutsideClick: false,
       });
     }
   };
+
   return (
     <PageWrapper title="Job Postings">
       <div className="container mx-auto p-4 text-lg">
@@ -98,6 +111,7 @@ function Careers(props) {
                   <label>Enter Site</label>
                   <Input
                     required
+                    disabled={true}
                     name="site"
                     size="large"
                     onChange={(e) =>
@@ -116,6 +130,7 @@ function Careers(props) {
                       <Input
                         required
                         name="workers"
+                        disabled={true}
                         size="medium"
                         onChange={(e) =>
                           handleWorkerChange(
@@ -133,6 +148,7 @@ function Careers(props) {
                       <InputNumber
                         required
                         name="count"
+                        disabled={true}
                         size="medium"
                         min={1}
                         onChange={(value) =>
@@ -146,26 +162,27 @@ function Careers(props) {
                         value={worker.count}
                       />
                     </div>
-                    <Button onClick={() => deleteRow(siteIndex, workerIndex)}>
+                    <Button
+                      disabled={true}
+                      onClick={() => deleteRow(siteIndex, workerIndex)}
+                    >
                       Delete Row
                     </Button>
                   </div>
                 ))}
-                <Button onClick={() => addRecord(siteIndex)}>Add Worker</Button>
-                {/* <Button onClick={() => deleteSite(siteIndex)}>Delete Site</Button> */}
+                <Button disabled={true} onClick={() => addRecord(siteIndex)}>
+                  Add Worker
+                </Button>
               </div>
             ))}
           </div>
-          {/* <Button className="my-4" onClick={addSite}>
-          Add Site
-        </Button> */}
+
           <div className="acitonButtons w-full mt-4 flex justify-center">
             <button
               className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center"
-              type="submit"
-              // onClick={sendData}
+              onClick={sendData}
             >
-              Save Data
+              Delete Data
             </button>
           </div>
         </Form>
@@ -174,4 +191,4 @@ function Careers(props) {
   );
 }
 
-export default Careers;
+export default DeleteCareers;

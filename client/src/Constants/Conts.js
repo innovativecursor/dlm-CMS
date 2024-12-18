@@ -5,5 +5,9 @@ export const Menu = {
     { text: "Update Projects", link: "/updateProjects" },
     { text: "Delete Projects", link: "/deleteProjects" },
   ],
-  careers: [{ text: "Edit Job Openings", link: "/careers" }],
+  careers: [
+    { text: "Create Job Openings", link: "/careers" },
+    { text: "Edit Job Openings", link: "/updateCareers" },
+    { text: "Delete Job Openings", link: "/deleteCareers" },
+  ],
 };

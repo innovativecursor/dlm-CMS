@@ -10,6 +10,9 @@ import { SearchOutlined } from "@ant-design/icons";
 function ProductTable(props) {
   const [openModal, setopenModal] = useState(false);
   const [inqMessage, setInqMessage] = useState("");
+  const [result, setResult] = useState(null);
+  const [switchRoutes, setSwitchRoutes] = useState(false);
+  const navigateTo = useNavigate();
   const inquiry_columns = [
     {
       title: "Inquiry_ID",
@@ -74,18 +77,38 @@ function ProductTable(props) {
     },
   ];
 
-  const testimonials_col = [
+  const careers_col = [
     {
-      title: "Testimonial Id",
-      dataIndex: "testimonial_id",
-      key: "testimonial_id",
-      fixed: "left",
+      title: "Site Name",
+      dataIndex: "jobOpenings",
+      key: "site",
+      render: (jobOpenings) => jobOpenings?.map((job) => job.site).join(", "), // Handles multiple sites
     },
 
     {
-      title: "Reviewer Name",
-      dataIndex: "reviewer_name",
-      key: "reviewer_name",
+      title: "Workers",
+      dataIndex: "jobOpenings",
+      key: "workers",
+      render: (jobOpenings) =>
+        jobOpenings
+          ?.map((job) =>
+            job.workers
+              .map((worker) => `${worker.count} ${worker.designation}`)
+              .join(", ")
+          )
+          .join(", "), // Format workers info
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text) => new Date(text).toLocaleDateString(), // Format the date
+    },
+    {
+      title: "Updated At",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (text) => new Date(text).toLocaleDateString(), // Format the date
     },
   ];
   const projects_col = [
@@ -185,9 +208,6 @@ function ProductTable(props) {
     },
   ];
 
-  const [result, setResult] = useState(null);
-  const [switchRoutes, setSwitchRoutes] = useState(false);
-  const navigateTo = useNavigate();
   const deleteInquiry = async (id) => {
     try {
       Swal.fire({
@@ -230,6 +250,9 @@ function ProductTable(props) {
         Menu: undefined, // Remove the Menu object
       }));
       setResult(flattenedResult);
+    } else if (props?.type == "Careers") {
+      const result = await getAxiosCall("/careers");
+      setResult(result?.data?.data);
     }
   };
   const renderTable = () => {
@@ -286,6 +309,58 @@ function ProductTable(props) {
               <p>{inqMessage}</p>
             </Modal>
           </>
+        );
+      case "Careers":
+        return (
+          <PageWrapper title={`${props.pageMode} Careers`}>
+            <Table
+              columns={careers_col}
+              dataSource={result}
+              size="large"
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: () => {
+                    navigateTo(
+                      props.pageMode === "Delete"
+                        ? "/deleteCareersinner"
+                        : "/updateCareersinner",
+                      { state: record }
+                    );
+                  },
+                };
+              }}
+              scroll={{
+                x: 1000,
+                y: 1500,
+              }}
+            />
+          </PageWrapper>
+        );
+      case "Projects":
+        return (
+          <PageWrapper title={`${props.pageMode} Projects`}>
+            <Table
+              columns={projects_col}
+              dataSource={result}
+              size="large"
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: () => {
+                    navigateTo(
+                      props.pageMode === "Delete"
+                        ? "/deleteProjectsinner"
+                        : "/updateProjectsinner",
+                      { state: record }
+                    );
+                  },
+                };
+              }}
+              scroll={{
+                x: 1000,
+                y: 1500,
+              }}
+            />
+          </PageWrapper>
         );
       case "Users":
         return (
