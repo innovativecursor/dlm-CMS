@@ -336,32 +336,6 @@ function ProductTable(props) {
             />
           </PageWrapper>
         );
-      case "Projects":
-        return (
-          <PageWrapper title={`${props.pageMode} Projects`}>
-            <Table
-              columns={projects_col}
-              dataSource={result}
-              size="large"
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: () => {
-                    navigateTo(
-                      props.pageMode === "Delete"
-                        ? "/deleteProjectsinner"
-                        : "/updateProjectsinner",
-                      { state: record }
-                    );
-                  },
-                };
-              }}
-              scroll={{
-                x: 1000,
-                y: 1500,
-              }}
-            />
-          </PageWrapper>
-        );
       case "Users":
         return (
           <PageWrapper title={`${props.pageMode} Users`}>
