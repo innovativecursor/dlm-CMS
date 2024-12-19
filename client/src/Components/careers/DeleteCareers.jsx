@@ -73,9 +73,6 @@ function DeleteCareers(props) {
 
   // Sending Data
   const sendData = async () => {
-    const payload = {
-      jobOpenings,
-    };
     try {
       const result = await deleteAxiosCall("/careers", record?.career_id);
       if (result) {
@@ -180,7 +177,7 @@ function DeleteCareers(props) {
           <div className="acitonButtons w-full mt-4 flex justify-center">
             <button
               className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center"
-              onClick={sendData}
+              type="submit"
             >
               Delete Data
             </button>

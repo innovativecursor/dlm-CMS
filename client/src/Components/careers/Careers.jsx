@@ -30,7 +30,6 @@ function Careers(props) {
 
   // Delete a site
   const deleteSite = (index) => {
-    debugger;
     if (jobOpenings?.length !== 1) {
       const updatedJobOpenings = jobOpenings.filter((_, i) => i !== index);
       setJobOpenings(updatedJobOpenings);

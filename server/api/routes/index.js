@@ -49,8 +49,8 @@ router.delete(
 );
 //Careers
 router.get("/careers", careerController.getAllCareers);
-router.post("/careers", careerController.createCareer);
-router.put("/careers/:id", careerController.updateCareer);
-router.delete("/careers/:id", careerController.deleteCareer);
+router.post("/careers", authenticateUser, careerController.createCareer);
+router.put("/careers/:id", authenticateUser, careerController.updateCareer);
+router.delete("/careers/:id", authenticateUser, careerController.deleteCareer);
 
 module.exports = router;
