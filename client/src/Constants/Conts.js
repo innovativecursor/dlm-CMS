@@ -10,4 +10,10 @@ export const Menu = {
     { text: "Edit Job Openings", link: "/updateCareers" },
     { text: "Delete Job Openings", link: "/deleteCareers" },
   ],
+  Misc: [
+    {
+      text: "Font Style & Text Color",
+      link: "/font_color",
+    },
+  ],
 };

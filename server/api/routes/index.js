@@ -6,7 +6,7 @@ const inquiryController = require("../controllers/inquiryController");
 const projectController = require("../controllers/projectController");
 const authenticateUser = require("../middleware/authenticateUser");
 const careerController = require("../controllers/careerController");
-
+const fontColorController = require("../controllers/fontColorController");
 const { apiLimiter } = require("../middleware/apiLimiter");
 
 // User routes
@@ -52,5 +52,11 @@ router.get("/careers", careerController.getAllCareers);
 router.post("/careers", authenticateUser, careerController.createCareer);
 router.put("/careers/:id", authenticateUser, careerController.updateCareer);
 router.delete("/careers/:id", authenticateUser, careerController.deleteCareer);
-
+//Font and its Color
+router.get("/getFontColor", authenticateUser, fontColorController.getFontColor);
+router.put(
+  "/updateFontColor/:font_name",
+  authenticateUser,
+  fontColorController.updateFontColor
+);
 module.exports = router;

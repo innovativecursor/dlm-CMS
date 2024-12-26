@@ -23,6 +23,7 @@ import DeleteProjects from "../Components/deleteProjects/DeleteProjects";
 import Careers from "../Components/careers/Careers";
 import UpdateCareers from "../Components/careers/UpdateCareers";
 import DeleteCareers from "../Components/careers/DeleteCareers";
+import FontColor from "../Components/fontandColor/FontColor";
 
 function Navigation(props) {
   const location = useLocation();
@@ -78,6 +79,7 @@ function Navigation(props) {
                 element={<ProductTable pageMode="Delete" type="Careers" />}
               />
               <Route path="/deleteCareersinner" element={<DeleteCareers />} />
+              <Route path="/font_color" element={<FontColor />} />
             </Route>
             <Route path="*" element={<Robots />} />
           </Routes>
