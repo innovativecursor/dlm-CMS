@@ -37,7 +37,14 @@ export default defineConfig({
       output: {
         globals: {
           react: "React",
+          manualChunks: (id) => {
+            if (id.includes("node_modules")) {
+              return "vendor"; // Separate vendor chunks
+            }
+          },
         },
+        vendor: ["react", "react-dom"], // Split out vendor libraries
+        utils: ["./src/utils/index.js"], // Split out utility functions
       },
     },
   },
