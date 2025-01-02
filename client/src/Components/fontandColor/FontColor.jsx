@@ -8,10 +8,30 @@ import Swal from "sweetalert2";
 function FontColor() {
   const [fonts, setFonts] = useState([]);
   const [currentPack, setCurrentPack] = useState({});
+
   useEffect(() => {
     font();
     fetchCurrentFont();
+
+    // Add the iframe onload logic
+    const iframe = document.querySelector("iframe");
+    if (iframe) {
+      iframe.onload = () => {
+        const iframeDoc =
+          iframe.contentDocument || iframe.contentWindow.document;
+        if (iframeDoc) {
+          const style = iframeDoc.createElement("style");
+          style.innerHTML = `
+            body {
+              font-family: 'Arial', sans-serif !important;
+            }
+          `;
+          iframeDoc.head.appendChild(style);
+        }
+      };
+    }
   }, []);
+
   const fetchCurrentFont = async () => {
     const getCurrentFontColor = await getAxiosCall("/getFontColor");
     setCurrentPack({
@@ -19,6 +39,7 @@ function FontColor() {
       label: getCurrentFontColor?.data?.font_name,
     });
   };
+
   const font = async () => {
     const response = await axios.get(
       `https://webfonts.googleapis.com/v1/webfonts?key=${process.env.FONT_KEY}`
@@ -30,7 +51,11 @@ function FontColor() {
   };
 
   const updateChanges = async () => {
-    const updatedRes = await updateAxiosCall("/updateFontColor", currentPack);
+    debugger;
+    const updatedRes = await updateAxiosCall(
+      "/updateFontColor",
+      currentPack?.value
+    );
     if (updatedRes) {
       Swal.fire({
         title: "Success",
@@ -43,6 +68,7 @@ function FontColor() {
       });
     }
   };
+
   return (
     <PageWrapper title="Font Style & Color">
       <div className="container mx-auto p-4 text-xl">
@@ -65,7 +91,10 @@ function FontColor() {
                   }
                   options={fonts}
                   onChange={(e) => {
-                    setCurrentPack(e);
+                    setCurrentPack({
+                      label: e,
+                      value: e,
+                    });
                   }}
                   value={currentPack}
                 />
@@ -78,7 +107,7 @@ function FontColor() {
         </div>
         <div style={{ width: "100%", height: "100vh", border: "none" }}>
           <iframe
-            src="https://dlmrealtyandconstructioncorp.com/"
+            src={`http://localhost:3000?font=${currentPack?.value}`}
             title="DLM Realty and Construction"
             style={{ width: "100%", height: "100%", border: "none" }}
             allowFullScreen
