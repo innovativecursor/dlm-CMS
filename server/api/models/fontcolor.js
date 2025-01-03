@@ -10,8 +10,40 @@ const Fontcolor = sequelize.define("Fontcolor", {
   },
   font_name: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     defaultValue: "Work Sans",
+  },
+  navTextColor: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  navIconsColor: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  heroMainTextColor: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  heroSubTextColor: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  universalButtonColor: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  universalSelectorTextColor: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  universalHeadingTextColor: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  universalContentTextColor: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 });
 

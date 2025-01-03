@@ -5,9 +5,6 @@ exports.getFontColor = async (req, res) => {
     const fontColor = await FontColor.findOne();
     if (fontColor) {
       res.status(200).json(fontColor);
-    } else {
-      // Return the default value if no record exists
-      res.status(200).json({ font_name: "Work Sans" });
     }
   } catch (error) {
     console.error("Error fetching font color:", error);
@@ -15,10 +12,17 @@ exports.getFontColor = async (req, res) => {
   }
 };
 exports.updateFontColor = async (req, res) => {
-  const { font_name } = req.params;
-  if (!font_name) {
-    return res.status(400).json({ error: "Font name is required" });
-  }
+  const {
+    font_name,
+    navTextColor,
+    navIconsColor,
+    heroMainTextColor,
+    heroSubTextColor,
+    universalButtonColor,
+    universalSelectorTextColor,
+    universalHeadingTextColor,
+    universalContentTextColor,
+  } = req.body; // Use req.body for the request payload instead of req.params.
 
   try {
     const [fontColor, created] = await FontColor.findOrCreate({
@@ -27,9 +31,46 @@ exports.updateFontColor = async (req, res) => {
     });
 
     if (!created) {
-      // Update the existing record
-      fontColor.font_name = font_name;
-      await fontColor.save();
+      // Update only the fields that are provided and changed
+      const updates = {};
+      if (font_name && font_name !== fontColor.font_name)
+        updates.font_name = font_name;
+      if (navTextColor && navTextColor !== fontColor.navTextColor)
+        updates.navTextColor = navTextColor;
+      if (navIconsColor && navIconsColor !== fontColor.navIconsColor)
+        updates.navIconsColor = navIconsColor;
+      if (
+        heroMainTextColor &&
+        heroMainTextColor !== fontColor.heroMainTextColor
+      )
+        updates.heroMainTextColor = heroMainTextColor;
+      if (heroSubTextColor && heroSubTextColor !== fontColor.heroSubTextColor)
+        updates.heroSubTextColor = heroSubTextColor;
+      if (
+        universalButtonColor &&
+        universalButtonColor !== fontColor.universalButtonColor
+      )
+        updates.universalButtonColor = universalButtonColor;
+      if (
+        universalSelectorTextColor &&
+        universalSelectorTextColor !== fontColor.universalSelectorTextColor
+      )
+        updates.universalSelectorTextColor = universalSelectorTextColor;
+      if (
+        universalHeadingTextColor &&
+        universalHeadingTextColor !== fontColor.universalHeadingTextColor
+      )
+        updates.universalHeadingTextColor = universalHeadingTextColor;
+      if (
+        universalContentTextColor &&
+        universalContentTextColor !== fontColor.universalContentTextColor
+      )
+        updates.universalContentTextColor = universalContentTextColor;
+
+      // Apply the updates only if there are changes
+      if (Object.keys(updates).length > 0) {
+        await fontColor.update(updates);
+      }
     }
 
     res.status(200).json({

@@ -9,17 +9,17 @@ import { HexColorPicker } from "react-colorful";
 function FontColor() {
   const [fonts, setFonts] = useState([]);
   const [currentPack, setCurrentPack] = useState({});
-  const [navTextColor, setNavTextColor] = useState("#aabbcc");
-  const [navIconsColor, setNavIconsColor] = useState("#aabbcc");
-  const [heroMainTextColor, setHeroMainTextColor] = useState("#aabbcc");
-  const [heroSubTextColor, setHeroSubTextColor] = useState("#aabbcc");
-  const [universalButtonColor, setUniversalButtonColor] = useState("#aabbcc");
+  const [navTextColor, setNavTextColor] = useState("#182a64");
+  const [navIconsColor, setNavIconsColor] = useState("#EBD26E");
+  const [heroMainTextColor, setHeroMainTextColor] = useState("#ffff");
+  const [heroSubTextColor, setHeroSubTextColor] = useState("#ffff");
+  const [universalButtonColor, setUniversalButtonColor] = useState("#EBD26E");
   const [universalSelectorTextColor, setUniversalSelectorTextColor] =
-    useState("#aabbcc");
+    useState("#EBD26E");
   const [universalHeadingTextColor, setUniversalHeadingTextColor] =
-    useState("#aabbcc");
+    useState("#182a64");
   const [universalContentTextColor, setUniversalContentTextColor] =
-    useState("#aabbcc");
+    useState("#676767");
 
   useEffect(() => {
     font();
@@ -50,6 +50,47 @@ function FontColor() {
       value: getCurrentFontColor?.data?.font_name,
       label: getCurrentFontColor?.data?.font_name,
     });
+
+    setNavTextColor(
+      getCurrentFontColor?.data?.navTextColor
+        ? getCurrentFontColor?.data?.navTextColor
+        : "#182a64"
+    );
+    setNavIconsColor(
+      getCurrentFontColor?.data?.navIconsColor
+        ? getCurrentFontColor?.data?.navIconsColor
+        : "#EBD26E"
+    );
+    setHeroMainTextColor(
+      getCurrentFontColor?.data?.heroMainTextColor
+        ? getCurrentFontColor?.data?.heroMainTextColor
+        : "#fff"
+    );
+    setHeroSubTextColor(
+      getCurrentFontColor?.data?.heroSubTextColor
+        ? getCurrentFontColor?.data?.heroSubTextColor
+        : "#fff"
+    );
+    setUniversalButtonColor(
+      getCurrentFontColor?.data?.universalButtonColor
+        ? getCurrentFontColor?.data?.universalButtonColor
+        : "#EBD26E"
+    );
+    setUniversalSelectorTextColor(
+      getCurrentFontColor?.data?.universalSelectorTextColor
+        ? getCurrentFontColor?.data?.universalSelectorTextColor
+        : "#EBD26E"
+    );
+    setUniversalHeadingTextColor(
+      getCurrentFontColor?.data?.universalHeadingTextColor
+        ? getCurrentFontColor?.data?.universalHeadingTextColor
+        : "#182a64"
+    );
+    setUniversalContentTextColor(
+      getCurrentFontColor?.data?.universalContentTextColor
+        ? getCurrentFontColor?.data?.universalContentTextColor
+        : "#676767"
+    );
   };
 
   const font = async () => {
@@ -63,7 +104,6 @@ function FontColor() {
   };
 
   const updateChanges = async () => {
-    debugger;
     const updatedRes = await updateAxiosCall(
       "/updateFontColor",
       currentPack?.value
@@ -85,37 +125,6 @@ function FontColor() {
     <PageWrapper title="Font Style & Color">
       <div className="container mx-auto p-4 text-xl">
         <div className="grid grid-cols-1 mb-8 sm:grid-cols-2 md:grid-cols-3 gap-6 shadow-lg py-4">
-          <div className="Select Font">
-            <div className="">
-              <div className="label">Select Font</div>
-              <div className="Select Fonts flex gap-4">
-                <Select
-                  showSearch
-                  style={{
-                    width: 200,
-                  }}
-                  optionFilterProp="label"
-                  placeholder="Search to find Fonts"
-                  filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "")
-                      .toLowerCase()
-                      .localeCompare((optionB?.label ?? "").toLowerCase())
-                  }
-                  options={fonts}
-                  onChange={(e) => {
-                    setCurrentPack({
-                      label: e,
-                      value: e,
-                    });
-                  }}
-                  value={currentPack}
-                />
-                <div className="flex items-center">
-                  <Button onClick={updateChanges}>Save</Button>
-                </div>
-              </div>
-            </div>
-          </div>
           <div className="Navbar">
             <div className="">
               <div className="label">Navbar Text Color</div>
@@ -270,10 +279,68 @@ function FontColor() {
               </div>
             </div>
           </div>
+          <div className=""></div>
+          <div className="Select Font">
+            <div className="">
+              <div className="label">Select Font</div>
+              <div className="Select Fonts flex gap-4">
+                <Select
+                  showSearch
+                  style={{
+                    width: 200,
+                  }}
+                  optionFilterProp="label"
+                  placeholder="Search to find Fonts"
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
+                  options={fonts}
+                  onChange={(e) => {
+                    setCurrentPack({
+                      label: e,
+                      value: e,
+                    });
+                  }}
+                  value={currentPack}
+                />
+                <div className="flex items-center">
+                  <Button onClick={updateChanges}>Save</Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div style={{ width: "100%", height: "100vh", border: "none" }}>
           <iframe
-            src={`http://localhost:3000?font=${currentPack?.value}`}
+            src={`http://localhost:3000?font=${
+              currentPack?.value
+            }&navTextColor=${navTextColor?.replace(
+              "#",
+              "%23"
+            )}&navIconsColor=${navIconsColor?.replace(
+              "#",
+              "%23"
+            )}&heroMainTextColor=${heroMainTextColor?.replace(
+              "#",
+              "%23"
+            )}&heroSubTextColor=${heroSubTextColor?.replace(
+              "#",
+              "%23"
+            )}&universalButtonColor=${universalButtonColor?.replace(
+              "#",
+              "%23"
+            )}&universalSelectorTextColor=${universalSelectorTextColor?.replace(
+              "#",
+              "%23"
+            )}&universalHeadingTextColor=${universalHeadingTextColor?.replace(
+              "#",
+              "%23"
+            )}&universalContentTextColor=${universalContentTextColor?.replace(
+              "#",
+              "%23"
+            )}`}
             title="DLM Realty and Construction"
             style={{ width: "100%", height: "100%", border: "none" }}
             allowFullScreen
