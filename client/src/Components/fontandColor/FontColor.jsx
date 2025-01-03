@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from "react";
 import PageWrapper from "../PageContainer/PageWrapper";
-import { Button, Select } from "antd";
+import { Button, Input, Select } from "antd";
 import { getAxiosCall, updateAxiosCall } from "../../Axios/UniversalAxiosCalls";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { HexColorPicker } from "react-colorful";
 
 function FontColor() {
   const [fonts, setFonts] = useState([]);
   const [currentPack, setCurrentPack] = useState({});
+  const [navTextColor, setNavTextColor] = useState("#aabbcc");
+  const [navIconsColor, setNavIconsColor] = useState("#aabbcc");
+  const [heroMainTextColor, setHeroMainTextColor] = useState("#aabbcc");
+  const [heroSubTextColor, setHeroSubTextColor] = useState("#aabbcc");
+  const [universalButtonColor, setUniversalButtonColor] = useState("#aabbcc");
+  const [universalSelectorTextColor, setUniversalSelectorTextColor] =
+    useState("#aabbcc");
+  const [universalHeadingTextColor, setUniversalHeadingTextColor] =
+    useState("#aabbcc");
+  const [universalContentTextColor, setUniversalContentTextColor] =
+    useState("#aabbcc");
 
   useEffect(() => {
     font();
@@ -72,8 +84,8 @@ function FontColor() {
   return (
     <PageWrapper title="Font Style & Color">
       <div className="container mx-auto p-4 text-xl">
-        <div className="grid grid-cols-1 my-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div className="my-4">
+        <div className="grid grid-cols-1 mb-8 sm:grid-cols-2 md:grid-cols-3 gap-6 shadow-lg py-4">
+          <div className="Select Font">
             <div className="">
               <div className="label">Select Font</div>
               <div className="Select Fonts flex gap-4">
@@ -98,6 +110,160 @@ function FontColor() {
                   }}
                   value={currentPack}
                 />
+                <div className="flex items-center">
+                  <Button onClick={updateChanges}>Save</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="Navbar">
+            <div className="">
+              <div className="label">Navbar Text Color</div>
+              <div className="Select_color flex flex-col gap-4">
+                <HexColorPicker
+                  color={navTextColor}
+                  onChange={setNavTextColor}
+                />
+                <Input
+                  onChange={(e) => setNavTextColor(e.target.value)}
+                  value={navTextColor}
+                />
+                <div className="flex items-center">
+                  <Button onClick={updateChanges}>Save</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="Navbar_icons">
+            <div className="">
+              <div className="label">Navbar Icons Color</div>
+              <div className="Select_color flex flex-col gap-4">
+                <HexColorPicker
+                  color={navIconsColor}
+                  onChange={setNavIconsColor}
+                />
+                <Input
+                  onChange={(e) => setNavIconsColor(e.target.value)}
+                  value={navIconsColor}
+                />
+                <div className="flex items-center">
+                  <Button onClick={updateChanges}>Save</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="Hero Section">
+            <div className="">
+              <div className="label">Hero Section Main Title Text Color</div>
+              <div className="Select_color flex flex-col gap-4">
+                <HexColorPicker
+                  color={heroMainTextColor}
+                  onChange={setHeroMainTextColor}
+                />
+                <Input
+                  onChange={(e) => setHeroMainTextColor(e.target.value)}
+                  value={heroMainTextColor}
+                />
+                <div className="flex items-center">
+                  <Button onClick={updateChanges}>Save</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="Hero Sub Section Subtitle">
+            <div className="">
+              <div className="label">Hero Section Sub Title Text Color</div>
+              <div className="Select_color flex flex-col gap-4">
+                <HexColorPicker
+                  color={heroSubTextColor}
+                  onChange={setHeroSubTextColor}
+                />
+                <Input
+                  onChange={(e) => setHeroSubTextColor(e.target.value)}
+                  value={heroSubTextColor}
+                />
+                <div className="flex items-center">
+                  <Button onClick={updateChanges}>Save</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="Universal Button Color">
+            <div className="">
+              <div className="label">Universal Button Color</div>
+              <div className="Select_color flex flex-col gap-4">
+                <HexColorPicker
+                  color={universalButtonColor}
+                  onChange={setUniversalButtonColor}
+                />
+                <Input
+                  onChange={(e) => setUniversalButtonColor(e.target.value)}
+                  value={universalButtonColor}
+                />
+                <div className="flex items-center">
+                  <Button onClick={updateChanges}>Save</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="Universal Selector Secton">
+            <div className="">
+              <div className="label">Universal Selector Text Color</div>
+              <div className="Select_color flex flex-col gap-4">
+                <HexColorPicker
+                  color={universalSelectorTextColor}
+                  onChange={setUniversalSelectorTextColor}
+                />
+                <Input
+                  onChange={(e) =>
+                    setUniversalSelectorTextColor(e.target.value)
+                  }
+                  value={universalSelectorTextColor}
+                />
+                <div className="flex items-center">
+                  <Button onClick={updateChanges}>Save</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="Universal Heading Secton">
+            <div className="">
+              <div className="label">Universal Heading Text Color</div>
+              <div className="Select_color flex flex-col gap-4">
+                <HexColorPicker
+                  color={universalHeadingTextColor}
+                  onChange={setUniversalHeadingTextColor}
+                />
+                <div className="text">
+                  <Input
+                    onChange={(e) =>
+                      setUniversalHeadingTextColor(e.target.value)
+                    }
+                    value={universalHeadingTextColor}
+                  />
+                </div>
+                <div className="flex items-center">
+                  <Button onClick={updateChanges}>Save</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="Universal Content Secton">
+            <div className="">
+              <div className="label">Universal Content Text Color</div>
+              <div className="Select_color flex flex-col gap-4">
+                <HexColorPicker
+                  color={universalContentTextColor}
+                  onChange={setUniversalContentTextColor}
+                />
+                <div className="text">
+                  <Input
+                    onChange={(e) =>
+                      setUniversalContentTextColor(e.target.value)
+                    }
+                    value={universalContentTextColor}
+                  />
+                </div>
                 <div className="flex items-center">
                   <Button onClick={updateChanges}>Save</Button>
                 </div>
